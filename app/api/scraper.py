@@ -12,6 +12,7 @@ from .helpers import (
 
 load_dotenv()
 
+
 async def scrape(hashtags, profiles):
     if not hashtags and not profiles:
         return jsonify(
@@ -29,6 +30,7 @@ async def scrape(hashtags, profiles):
         "hashtag_result": hashtag_result,
         "profile_result": profile_result,
     }
+
 
 async def scrape_hastag(hastags):
     actor = await get_scraper("apify/instagram-hashtag-stats")
