@@ -45,7 +45,7 @@ def collect_toppost_values(df, column="topPosts_cleaned", unique=False):
 async def get_last_run_hash_stats():
     """Fetch last run hashtag stats from Apify and extract captions + hashtags."""
     actor = await get_scraper("apify/instagram-hashtag-stats")
-    last_run = await actor.last_run()  # <-- ensure awaited
+    last_run = actor.last_run()  # <-- ensure awaited
     dataset_client = last_run.dataset()
 
     dataset_data = await dataset_client.list_items()
@@ -70,13 +70,11 @@ def get_captions_and_hashtags_for_posts(df):
 async def get_last_run_posts():
     """Fetch last run posts from Apify and extract captions + hashtags."""
     actor = await get_scraper("apify/instagram-post-scraper")
-    last_run = await actor.last_run()
+    last_run = actor.last_run()
     dataset_client = last_run.dataset()
 
     dataset_data = await dataset_client.list_items()
     df = pd.DataFrame(dataset_data.items)
-
-    df.to_csv("posts.csv", index=False)
 
     captions, hashtags = get_captions_and_hashtags_for_posts(df)
     return captions, hashtags
