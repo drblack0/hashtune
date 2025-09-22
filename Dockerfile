@@ -29,12 +29,18 @@ COPY . .
 RUN adduser --disabled-password --gecos '' appuser && chown -R appuser:appuser /app
 USER appuser
 
-# Expose port
-EXPOSE 5000
+# Expose port (will be set by environment variable)
+EXPOSE $PORT
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:5000/ || exit 1
+    CMD curl -f http://localhost:$PORT/ || exit 1
+
+# Create startup script to handle dynamic port
+RUN echo '#!/bin/sh' > /app/start.sh && \
+    echo 'PORT=${PORT:-5000}' >> /app/start.sh && \
+    echo 'uvicorn app.main:asgi_app --host 0.0.0.0 --port $PORT' >> /app/start.sh && \
+    chmod +x /app/start.sh
 
 # Run the application
-CMD ["uvicorn", "app.main:asgi_app", "--host", "0.0.0.0", "--port", "5000"]
+CMD ["/app/start.sh"]
